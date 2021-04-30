@@ -35,7 +35,7 @@ window.onload = () => {
                 document.getElementById("toggle").value = "Disable Active Mode";
             }
         });
-    }
+    };
     document.getElementById("buster").onclick = () => {
         chrome.storage.sync.get("buster", (data) => {
             if (data.buster) {
@@ -46,7 +46,7 @@ window.onload = () => {
                 document.getElementById("buster").value = "Disable Window Mode";
             }
         });
-    }
+    };
 
     document.getElementById("passive").onclick = () => {
         chrome.storage.sync.get("passive", (data) => {
@@ -58,23 +58,23 @@ window.onload = () => {
                 document.getElementById("passive").value = "Disable Passive Mode";
             }
         });
-    }
+    };
 
     document.getElementById("brute").onclick = () => {
         chrome.tabs.executeScript(null, {
             code: `document.dispatchEvent(new CustomEvent('TriggerBrute'));`
         });
-    }
+    };
 
     document.getElementById("brutehash").onclick = () => {
         chrome.tabs.executeScript(null, {
             code: `document.dispatchEvent(new CustomEvent('TriggerBruteHash'));`
         });
-    }
+    };
 
     document.getElementById("clear").onclick = () => {
         port.postMessage('clearLog');
-    }
+    };
 }
 
 const table = document.getElementById('found-list');
@@ -100,9 +100,25 @@ request.onsuccess = (event) => {
                     element.index = '-';
                 }
 
-                var td = document.createElement("td");
-                td.innerText = element.index;
-                tr.appendChild(td);
+                var indexCol = document.createElement("td");
+                var anchor1 = document.createElement("a");
+                var anchor2 = document.createElement("a");
+
+                anchor1.innerHTML = '&times;';
+                anchor2.innerText = element.index;
+
+                anchor1.onclick = (event) => {
+                    deleteByKey(PASV_STORE, element.index)
+                        .then(() => {
+                            event.target.parentElement.parentElement.remove();
+                        });
+                };
+
+                indexCol.appendChild(anchor1);
+                indexCol.appendChild(anchor2);
+
+                // indexCol.innerHTML = `<a href="javascript:deleteByKey(PASV_STORE, ${element.index})"></a><a>${element.index}</a>`;
+                tr.appendChild(indexCol);
 
                 var td = document.createElement("td");
                 var anchor = document.createElement("a");

@@ -56,6 +56,21 @@ td {
     padding: 2px 4px;
 }
 
+td:nth-child(1)>a:nth-child(1) {
+    text-decoration: none;
+    color: black;
+    display: none;
+    cursor: pointer;
+}
+
+td:nth-child(1):hover>a:nth-child(1) {
+    display: inline;
+}
+
+td:nth-child(1):hover>a:nth-child(2) {
+    display: none;
+}
+
 td:nth-child(1),
 td:nth-child(2),
 td:nth-child(3) {
