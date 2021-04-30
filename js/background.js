@@ -35,17 +35,14 @@ const databaseUrl = chrome.extension.getURL("/database.csv");
 
 /* setup listeners */
 chrome.runtime.onMessage.addListener((message) => {
-    debugger;
-    console.log(333, message);
-    // found.add(msg);
-    // found.get().then((res) => {
-    //     console.log(res);
-    //     setBadgeCount(res.length);
-    // });
+    if (message.type == 'TryScan') {
+        console.log(message);
+        matchPattern(message.content, message.initiator);
+    }
 });
 
 chrome.extension.onConnect.addListener((port) => {
-    console.warn("New Session ", port);
+    console.log("New Session ", port);
     if (port.name == "logger") {
         port.onMessage.addListener((msg) => {
             if (msg == "clearLog") {

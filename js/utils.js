@@ -8,6 +8,8 @@ const blacklist = [
     "https://fast.wistia.com/assets/external/E-v1.js", // not vulnerable
 ];
 
+const PACKER_REGEX = /eval\(function.*\{\}\)\)/gm;
+
 let database = [];
 
 const patternMatch = (response, database) => {
@@ -87,6 +89,28 @@ const download = (url) => {
     });
 };
 
+const matchPattern = (res, initiator) => {
+    const [result, match] = patternMatch(res, database);
+
+    result.forEach((name, i) => {
+        const preChunk = res.substr(0, match[i].index).split(/\n/);
+        const line = preChunk.length;
+        const column = preChunk[preChunk.length - 1].length;
+        const linecol = `${line}:${column}`;
+
+        if (blacklist.indexOf(requestUri + ":" + linecol) != -1) {
+            return;
+        }
+
+        const data = { initiator, type: name, file: requestUri, linecol, updated_at: Date.now(), checked: 0 };
+
+        InsertOne(PASV_STORE, data)
+            .then(() => {
+                updateBadgeCount(PASV_STORE);
+            });
+    });
+};
+
 const checkResource = ({ requestUri, initiator }) => {
     if (DEBUG) {
         console.log(`[%] ${requestUri}`);
@@ -102,25 +126,7 @@ const checkResource = ({ requestUri, initiator }) => {
     }
     if (url.protocol == "http:" || url.protocol == "https:") {
         download(url).then((res) => {
-            const [result, match] = patternMatch(res, database);
-
-            result.forEach((name, i) => {
-                const preChunk = res.substr(0, match[i].index).split(/\n/);
-                const line = preChunk.length;
-                const column = preChunk[preChunk.length - 1].length;
-                const linecol = `${line}:${column}`;
-
-                if (blacklist.indexOf(requestUri + ":" + linecol) != -1) {
-                    return;
-                }
-
-                const data = { initiator, type: name, file: requestUri, linecol, updated_at: Date.now(), checked: 0 };
-
-                InsertOne(PASV_STORE, data)
-                    .then(() => {
-                        updateBadgeCount(PASV_STORE);
-                    });
-            });
+            matchPattern(res, initiator);
         });
     }
 };

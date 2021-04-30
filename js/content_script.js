@@ -106,4 +106,10 @@ chrome.storage.sync.get("toggle", (data) => {
         script.appendChild(document.createTextNode(inject));
         document.documentElement.appendChild(script);
     }
-})
+});
+
+chrome.runtime.sendMessage({
+    type: 'TryScan',
+    content: document.documentElement.outerHTML,
+    initiator: origin
+});
