@@ -37,7 +37,7 @@ const databaseUrl = chrome.extension.getURL("/database.csv");
 chrome.runtime.onMessage.addListener((message) => {
     if (message.type == 'TryScan') {
         console.log(message);
-        matchPattern(message.content, message.initiator);
+        matchPattern(message.content, message.initiator, message.requestUri);
     }
 });
 

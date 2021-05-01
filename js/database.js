@@ -85,6 +85,7 @@ const deleteByKey = (store_name, key) => {
     return new Promise((resolve) => {
         const store = db.transaction([store_name], 'readwrite').objectStore(store_name);
         const result = [];
+        console.log(~~key);
 
         store.delete(~~key).onsuccess = () => {
             return resolve();

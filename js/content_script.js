@@ -111,5 +111,6 @@ chrome.storage.sync.get("toggle", (data) => {
 chrome.runtime.sendMessage({
     type: 'TryScan',
     content: document.documentElement.outerHTML,
-    initiator: origin
+    initiator: origin,
+    requestUri: location.href
 });

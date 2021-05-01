@@ -89,7 +89,7 @@ const download = (url) => {
     });
 };
 
-const matchPattern = (res, initiator) => {
+const matchPattern = (res, initiator, requestUri) => {
     const [result, match] = patternMatch(res, database);
 
     result.forEach((name, i) => {
@@ -98,7 +98,7 @@ const matchPattern = (res, initiator) => {
         const column = preChunk[preChunk.length - 1].length;
         const linecol = `${line}:${column}`;
 
-        if (blacklist.indexOf(requestUri + ":" + linecol) != -1) {
+        if (blacklist.indexOf(initiator + ":" + linecol) != -1) {
             return;
         }
 
@@ -126,7 +126,7 @@ const checkResource = ({ requestUri, initiator }) => {
     }
     if (url.protocol == "http:" || url.protocol == "https:") {
         download(url).then((res) => {
-            matchPattern(res, initiator);
+            matchPattern(res, initiator, requestUri);
         });
     }
 };
